@@ -22,6 +22,13 @@
 ## Quick Start
 
 ```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.13
+sudo apt install python3.13-venv python3.13-dev
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
