@@ -1,0 +1,15 @@
+name: "code"
+description: "Write, modify, or refactor RTL or TB code"
+system_prompt_suffix: "Return practical code-first solutions with rationale."
+preferred_skills:
+  - "testbench_writer"
+use_planner: false
+plan_approval: false
+react_loop:
+  max_iterations: 15
+  show_thought: true
+  show_action: true
+  show_observation: true
+  abort_on_error: false
+  iteration_warning: 6
+  output_format: "markdown"

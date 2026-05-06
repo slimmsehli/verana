@@ -1,0 +1,17 @@
+name: "debug"
+description: "Root cause a failing simulation or synthesis issue"
+system_prompt_suffix: |
+  Focus on identifying the exact failure point before proposing any fix.
+preferred_skills:
+  - "rtl_debug"
+  - "waveform_analyzer"
+use_planner: false
+plan_approval: false
+react_loop:
+  max_iterations: 20
+  show_thought: true
+  show_action: true
+  show_observation: true
+  abort_on_error: false
+  iteration_warning: 10
+  output_format: "markdown"

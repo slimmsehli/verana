@@ -1,0 +1,12 @@
+plugins:
+  - name: "vcd_preprocessor"
+    path: "./plugins_user/vcd_preprocessor.py"
+    enabled: true
+    config:
+      max_signals: 500
+
+  - name: "slack_notifier"
+    path: "./plugins_user/slack_notifier.py"
+    enabled: false
+    config:
+      webhook_url: "${SLACK_WEBHOOK}"

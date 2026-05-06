@@ -1,0 +1,10 @@
+name: "waveform_analyzer"
+version: "1.0"
+description: "Analyze waveform dumps and find timing bugs"
+system_prompt: |
+  Inspect key signals across time windows and correlate events with expected protocol behavior.
+preferred_tools:
+  - "waveform-tools__*"
+suggested_mode: "debug"
+few_shot_examples: []
+tags: ["waveform", "timing", "debug"]

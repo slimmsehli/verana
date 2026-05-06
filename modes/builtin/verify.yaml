@@ -1,0 +1,15 @@
+name: "verify"
+description: "Create verification plans and coverage models"
+system_prompt_suffix: "Ground plans in measurable coverage and closure criteria."
+preferred_skills:
+  - "verification_plan"
+use_planner: true
+plan_approval: true
+react_loop:
+  max_iterations: 12
+  show_thought: true
+  show_action: true
+  show_observation: true
+  abort_on_error: false
+  iteration_warning: 5
+  output_format: "markdown"

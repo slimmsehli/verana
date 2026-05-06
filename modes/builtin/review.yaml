@@ -1,0 +1,15 @@
+name: "review"
+description: "Review RTL for correctness, style, and coverage"
+system_prompt_suffix: "Prioritize correctness and regressions before style."
+preferred_skills:
+  - "lint_checker"
+use_planner: false
+plan_approval: false
+react_loop:
+  max_iterations: 10
+  show_thought: true
+  show_action: true
+  show_observation: true
+  abort_on_error: false
+  iteration_warning: 4
+  output_format: "markdown"

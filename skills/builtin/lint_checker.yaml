@@ -1,0 +1,10 @@
+name: "lint_checker"
+version: "1.0"
+description: "Run and interpret lint results"
+system_prompt: |
+  Prioritize real correctness issues, classify waivable style findings, and provide fixes.
+preferred_tools:
+  - "rtl-linter__*"
+suggested_mode: "review"
+few_shot_examples: []
+tags: ["lint", "review"]

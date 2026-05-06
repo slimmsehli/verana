@@ -1,0 +1,15 @@
+name: "spec"
+description: "Extract or author design specifications"
+system_prompt_suffix: "Prefer clear structure and unambiguous requirements."
+preferred_skills:
+  - "spec_writer"
+use_planner: false
+plan_approval: false
+react_loop:
+  max_iterations: 12
+  show_thought: true
+  show_action: true
+  show_observation: true
+  abort_on_error: false
+  iteration_warning: 5
+  output_format: "markdown"

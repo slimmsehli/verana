@@ -1,0 +1,10 @@
+name: "testbench_writer"
+version: "1.0"
+description: "Write SystemVerilog/UVM testbench stubs"
+system_prompt: |
+  Produce compile-ready testbench skeletons with clear TODOs and minimal assumptions.
+preferred_tools:
+  - "codebase__search"
+suggested_mode: "code"
+few_shot_examples: []
+tags: ["tb", "uvm", "code"]

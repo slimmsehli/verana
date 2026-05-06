@@ -1,0 +1,42 @@
+agent:
+  name: "rtl-agent"
+  default_provider: "anthropic"
+  default_model: "claude-sonnet-4-20250514"
+  default_mode: "debug"
+  default_skills: []
+  max_react_iterations: 15
+  show_thinking: true
+  show_tool_calls: true
+  temperature: 0.2
+  stream_output: true
+
+planner:
+  enabled: false
+  provider: "anthropic"
+  model: "claude-opus-4-20250514"
+  temperature: 0.1
+
+budget:
+  enabled: true
+  max_input_tokens: 500000
+  max_output_tokens: 100000
+  warn_at_percent: 80
+  hard_stop: true
+
+sessions:
+  storage_dir: "./sessions"
+  auto_save: true
+
+logging:
+  level: "INFO"
+  log_file: "./logs/agent.log"
+  log_react_steps: true
+
+plugins:
+  enabled: true
+  plugin_dir: "./plugins_user"
+
+ui:
+  theme: "dark"
+  show_token_count: true
+  show_budget_bar: true

@@ -1,0 +1,2 @@
+"""Skills registry and composer."""
+

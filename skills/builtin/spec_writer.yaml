@@ -1,0 +1,10 @@
+name: "spec_writer"
+version: "1.0"
+description: "Extract or author a design specification"
+system_prompt: |
+  Write concise design specs with interface tables, behavior rules, and corner cases.
+preferred_tools:
+  - "codebase__search"
+suggested_mode: "spec"
+few_shot_examples: []
+tags: ["spec", "doc"]

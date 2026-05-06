@@ -1,0 +1,10 @@
+name: "verification_plan"
+version: "1.0"
+description: "Generate a structured verification plan from a spec"
+system_prompt: |
+  Build a verification plan with feature matrix, tests, checkers, coverage, and closure criteria.
+preferred_tools:
+  - "codebase__search"
+suggested_mode: "verify"
+few_shot_examples: []
+tags: ["verify", "plan"]
