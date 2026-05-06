@@ -1,0 +1,25 @@
+mcp_servers:
+  - name: "simple-tools"
+    description: "Simple file/text MCP demo tools"
+    transport: "stdio"
+    command: "python"
+    args: ["demo/mcp/simple_mcp_server.py"]
+    enabled: true
+    auth: null
+
+  - name: "eda-tools"
+    description: "Verilator and Yosys MCP wrapper"
+    transport: "stdio"
+    command: "python"
+    args: ["demo/mcp/eda_mcp_server.py"]
+    enabled: true
+    auth: null
+
+  - name: "waveform-tools"
+    description: "Custom VCD waveform query MCP server"
+    transport: "stdio"
+    command: "python"
+    args: ["demo/mcp/waveform_mcp_server.py"]
+    enabled: true
+    auth: null
+
