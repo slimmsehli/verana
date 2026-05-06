@@ -58,6 +58,8 @@ Fill in keys in `.env`:
 
 ```bash
 python -m compileall .
+./venv/bin/pip install -e . --no-deps
+./venv/bin/rtl-agent --help
 ```
 
 ---

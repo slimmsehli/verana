@@ -1,11 +1,7 @@
 from __future__ import annotations
 
 from config_models import ProvidersFile
-from llm.anthropic_provider import AnthropicProvider
 from llm.base import LLMProvider
-from llm.gemini_provider import GeminiProvider
-from llm.ollama_provider import OllamaProvider
-from llm.openai_provider import OpenAIProvider
 
 
 def make_provider(name: str, model: str | None, providers: ProvidersFile) -> LLMProvider:
@@ -15,12 +11,20 @@ def make_provider(name: str, model: str | None, providers: ProvidersFile) -> LLM
 
     selected_model = model or conf.default_model
     if name == "anthropic":
+        from llm.anthropic_provider import AnthropicProvider
+
         return AnthropicProvider(conf.api_key, selected_model, conf.available_models, conf.base_url, conf.timeout)
     if name == "openai":
+        from llm.openai_provider import OpenAIProvider
+
         return OpenAIProvider(conf.api_key, selected_model, conf.available_models, conf.base_url, conf.timeout)
     if name == "gemini":
+        from llm.gemini_provider import GeminiProvider
+
         return GeminiProvider(conf.api_key, selected_model, conf.available_models, conf.timeout)
     if name == "ollama":
+        from llm.ollama_provider import OllamaProvider
+
         return OllamaProvider(conf.base_url, selected_model, conf.available_models)
     raise ValueError(f"Unsupported provider: {name}")
 

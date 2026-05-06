@@ -1,7 +1,7 @@
 agent:
   name: "rtl-agent"
-  default_provider: "anthropic"
-  default_model: "claude-sonnet-4-20250514"
+  default_provider: "openai"
+  default_model: "gpt-4o"
   default_mode: "debug"
   default_skills: []
   max_react_iterations: 15
