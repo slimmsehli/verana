@@ -30,5 +30,22 @@ dev = [
 [project.scripts]
 rtl-agent = "cli.main:app"
 
+[tool.setuptools.packages.find]
+include = [
+  "agent*",
+  "budget*",
+  "cli*",
+  "llm*",
+  "mcp*",
+  "modes*",
+  "plugins*",
+  "session*",
+  "skills*",
+]
+
 [tool.setuptools]
-py-modules = []
+py-modules = [
+  "config_loader",
+  "config_models",
+  "logging_utils",
+]
