@@ -10,11 +10,13 @@ This demo shows how `rtl-agent` can integrate with multiple MCP servers and use 
   - wraps `verilator` and `yosys`
 - `demo/mcp/waveform_mcp_server.py`
   - parses VCD and exposes signal query tools
+- `demo/mcp/terminal_mcp_server.py`
+  - executes Linux shell commands within a restricted workspace root
 - `demo/rtl_case/`
   - intentionally buggy RTL + testbench
   - Makefile for lint/build/run/yosys
 - `demo/config/mcp_servers.demo.yaml`
-  - MCP server config for this demo
+  - MCP server config for this demo (including `terminal-tools`)
 - `demo/run_demo.sh`
   - helper script for setup and baseline run
 
@@ -36,7 +38,7 @@ chmod +x demo/run_demo.sh
 Then start the agent:
 
 ```bash
-./venv/bin/rtl-agent run --mode debug --skills rtl_debug,waveform_analyzer
+./venv/bin/rtl-agent run --mode debug --skills rtl_debug,waveform_analyzer --confirm-terminal
 ```
 
 Suggested prompt:

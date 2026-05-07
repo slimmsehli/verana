@@ -23,3 +23,13 @@ mcp_servers:
     enabled: true
     auth: null
 
+  - name: "terminal-tools"
+    description: "Local Linux terminal command execution"
+    transport: "stdio"
+    command: "python"
+    args: ["demo/mcp/terminal_mcp_server.py"]
+    env:
+      TERMINAL_MCP_ROOT: "."
+    enabled: true
+    auth: null
+

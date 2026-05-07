@@ -143,6 +143,18 @@ Use additional env file:
 rtl-agent run --env-file ./my.env
 ```
 
+Terminal tool approvals (enabled by default):
+
+```bash
+rtl-agent run --confirm-terminal
+```
+
+Disable prompts only when you trust the tool surface:
+
+```bash
+rtl-agent run --no-confirm-terminal
+```
+
 ---
 
 ## 7) In-session slash commands
@@ -314,6 +326,13 @@ rtl-agent mcp remove <name>
 Tool names are namespaced:
 
 `<server-name>__<tool-name>`
+
+Local terminal MCP option:
+
+- Add/enable `terminal-tools` in `config/mcp_servers.yaml`.
+- It exposes `terminal-tools__run_command`.
+- Use `TERMINAL_MCP_ROOT` to restrict command execution to a safe workspace root.
+- `rtl-agent run` asks for interactive confirmation before each terminal action.
 
 Auth supported in `config/mcp_servers.yaml`:
 

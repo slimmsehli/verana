@@ -1,49 +1,59 @@
 mcp_servers:
-  - name: "waveform-tools"
-    description: "VCD/FSDB waveform inspection and query tools"
-    transport: "stdio"
-    command: "python"
-    args: ["-m", "waveform_mcp"]
-    env:
-      WAVE_DIR: "/data/waves"
-    enabled: true
-    auth: null
-
-  - name: "rtl-linter"
-    description: "Verilator and svlint integration"
-    transport: "stdio"
-    command: "/usr/local/bin/rtl_linter_mcp"
-    args: []
-    enabled: true
-    auth: null
-
-  - name: "sim-runner"
-    description: "Simulation runner - HTTP MCP with bearer token"
-    transport: "http"
-    url: "http://localhost:8080/mcp"
-    enabled: true
-    auth:
-      type: "bearer"
-      token: "${SIM_TOKEN}"
-
-  - name: "codebase"
-    description: "RTL codebase search - HTTP MCP with OAuth 2.0"
-    transport: "http"
-    url: "https://internal.corp/mcp/codebase"
-    enabled: false
-    auth:
-      type: "oauth"
-      token_url: "https://internal.corp/oauth/token"
-      client_id: "${CODEBASE_CLIENT_ID}"
-      client_secret: "${CODEBASE_CLIENT_SECRET}"
-      scopes: ["read:rtl", "read:sim"]
-
-  - name: "coverage-db"
-    description: "Coverage database query - HTTP MCP with API key"
-    transport: "http"
-    url: "https://internal.corp/mcp/coverage"
-    enabled: false
-    auth:
-      type: "api_key"
-      header: "X-API-Key"
-      value: "${COVERAGE_API_KEY}"
+- name: waveform-tools
+  description: VCD/FSDB waveform inspection and query tools
+  transport: stdio
+  command: python
+  args:
+  - -m
+  - waveform_mcp
+  env:
+    WAVE_DIR: /data/waves
+  enabled: true
+  auth: null
+- name: rtl-linter
+  description: Verilator and svlint integration
+  transport: stdio
+  command: /usr/local/bin/rtl_linter_mcp
+  args: []
+  enabled: false
+  auth: null
+- name: sim-runner
+  description: Simulation runner - HTTP MCP with bearer token
+  transport: http
+  url: http://localhost:8080/mcp
+  enabled: false
+  auth:
+    type: bearer
+    token: ${SIM_TOKEN}
+- name: codebase
+  description: RTL codebase search - HTTP MCP with OAuth 2.0
+  transport: http
+  url: https://internal.corp/mcp/codebase
+  enabled: false
+  auth:
+    type: oauth
+    token_url: https://internal.corp/oauth/token
+    client_id: ${CODEBASE_CLIENT_ID}
+    client_secret: ${CODEBASE_CLIENT_SECRET}
+    scopes:
+    - read:rtl
+    - read:sim
+- name: coverage-db
+  description: Coverage database query - HTTP MCP with API key
+  transport: http
+  url: https://internal.corp/mcp/coverage
+  enabled: false
+  auth:
+    type: api_key
+    header: X-API-Key
+    value: ${COVERAGE_API_KEY}
+- name: terminal-tools
+  description: Local Linux terminal command execution (requires run-time approval)
+  transport: stdio
+  command: python
+  args:
+  - demo/mcp/terminal_mcp_server.py
+  env:
+    TERMINAL_MCP_ROOT: .
+  enabled: true
+  auth: null

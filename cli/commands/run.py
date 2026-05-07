@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 from pathlib import Path
+from typing import Any
 
 import typer
 
@@ -32,6 +33,11 @@ def run(
     budget_input: int | None = typer.Option(None, "--budget-input"),
     budget_output: int | None = typer.Option(None, "--budget-output"),
     env_file: Path | None = typer.Option(None, "--env-file"),
+    confirm_terminal: bool = typer.Option(
+        True,
+        "--confirm-terminal/--no-confirm-terminal",
+        help="Require interactive approval before terminal MCP tool calls.",
+    ),
     no_stream: bool = typer.Option(False, "--no-stream"),
     quiet: bool = typer.Option(False, "--quiet"),
 ) -> None:
@@ -140,6 +146,29 @@ def run(
             elif kind == "final":
                 show_final(payload)
 
+        def is_terminal_tool(tool_name: str) -> bool:
+            if "__" not in tool_name:
+                return False
+            server_name, local_tool = tool_name.split("__", 1)
+            return "terminal" in server_name or local_tool in {"run_command", "exec_command"}
+
+        def approve_tool_call(tool_name: str, arguments: dict[str, Any]) -> bool:
+            if not confirm_terminal or not is_terminal_tool(tool_name):
+                return True
+            typer.echo(f"\nApproval required for tool call: {tool_name}")
+            if arguments:
+                try:
+                    payload = json.dumps(arguments, indent=2, ensure_ascii=True)
+                except Exception:
+                    payload = str(arguments)
+                if len(payload) > 1200:
+                    payload = f"{payload[:1200]}\n...<truncated>..."
+                typer.echo(payload)
+            allowed = typer.confirm("Allow this terminal action?", default=False)
+            if not allowed:
+                typer.echo("Tool call denied by user.")
+            return allowed
+
         context = asyncio.run(
             agent.run_once(
                 user_text=user,
@@ -152,6 +181,7 @@ def run(
                 budget_input=budget_input,
                 budget_output=budget_output,
                 on_event=on_event,
+                tool_approval_callback=approve_tool_call,
             )
         )
         md = context.metadata

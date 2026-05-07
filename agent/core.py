@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -61,6 +62,7 @@ class Agent:
         budget_input: int | None = None,
         budget_output: int | None = None,
         on_event=lambda _k, _v: None,
+        tool_approval_callback: Callable[[str, dict[str, Any]], bool] | None = None,
     ) -> AgentContext:
         provider_name = provider_name or self.cfg.settings.agent.default_provider
         model_name = model_name or self.cfg.settings.agent.default_model
@@ -110,7 +112,7 @@ class Agent:
 
         main_provider = make_provider(provider_name, model_name, self.cfg.providers)
         mcp_registry = await self._connect_mcp()
-        dispatcher = ToolDispatcher(mcp_registry)
+        dispatcher = ToolDispatcher(mcp_registry, approval_callback=tool_approval_callback)
         budget_tracker = BudgetTracker(
             state=metadata.budget,
             warn_at_percent=self.cfg.settings.budget.warn_at_percent,

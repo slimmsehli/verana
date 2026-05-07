@@ -1,17 +1,25 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from mcp.registry import MCPRegistry
 
 
 class ToolDispatcher:
-    def __init__(self, registry: MCPRegistry):
+    def __init__(
+        self,
+        registry: MCPRegistry,
+        approval_callback: Callable[[str, dict[str, Any]], bool] | None = None,
+    ):
         self.registry = registry
+        self.approval_callback = approval_callback
 
     async def dispatch(self, namespaced_tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if "__" not in namespaced_tool_name:
             raise ValueError(f"Tool name must be namespaced: {namespaced_tool_name}")
+        if self.approval_callback and not self.approval_callback(namespaced_tool_name, arguments):
+            raise PermissionError(f"Tool call not approved by user: {namespaced_tool_name}")
         server_name, tool_name = namespaced_tool_name.split("__", 1)
         client = self.registry.clients.get(server_name)
         if not client:
