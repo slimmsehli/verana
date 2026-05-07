@@ -81,6 +81,60 @@ class ScriptedProvider(LLMProvider):
         return ["scripted-test-model"]
 
 
+class DeniedProvider(LLMProvider):
+    """Deterministic provider that tries one terminal call then finishes."""
+
+    def __init__(self) -> None:
+        self._step = 0
+
+    async def complete(
+        self,
+        messages: list[Message],
+        tools: list[dict[str, Any]],
+        system: str | None,
+        temperature: float,
+        stream: bool,
+    ) -> LLMResponse:
+        self._step += 1
+        if self._step == 1:
+            return LLMResponse(
+                content="Try creating blocked_summary.txt.",
+                tool_calls=[
+                    {
+                        "id": "tc-deny-1",
+                        "function": {
+                            "name": "terminal-tools__run_command",
+                            "arguments": {
+                                "command": "printf 'should not exist\\n' > blocked_summary.txt",
+                            },
+                        },
+                    }
+                ],
+                input_tokens=10,
+                output_tokens=20,
+                stop_reason="tool_use",
+            )
+        return LLMResponse(
+            content="Terminal action was blocked as expected.",
+            tool_calls=[],
+            input_tokens=5,
+            output_tokens=10,
+            stop_reason="end_turn",
+        )
+
+    async def stream_complete(
+        self,
+        messages: list[Message],
+        tools: list[dict[str, Any]],
+        system: str | None,
+        temperature: float,
+    ) -> AsyncIterator[str]:
+        yield "streaming not used in this test"
+
+    def list_models(self) -> list[str]:
+        return ["denied-test-model"]
+
+
 def test_terminal_tool_calls_require_and_use_approval(monkeypatch: Any, tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
     work_dir = tmp_path / "work"
@@ -118,7 +172,7 @@ def test_terminal_tool_calls_require_and_use_approval(monkeypatch: Any, tmp_path
             tool_approval_callback=approve,
         )
     )
-    print(f" ================================================= \n\n\n TEST CHECKPOINT START\n\n\n")
+    print(f" ================================================= \n\n\n TEST GRANTED ACCESS CHECKPOINT START\n\n\n")
     summary = work_dir / "summary.txt"
     print(f"summary path: {summary}")
     print(f"summary exists: {summary.exists()}")
@@ -131,4 +185,55 @@ def test_terminal_tool_calls_require_and_use_approval(monkeypatch: Any, tmp_path
     assert len(approvals) == 2
     assert all(name == "terminal-tools__run_command" for name, _ in approvals)
     assert "Done." in str(context.messages[-1].content)
-    print(f"\n\n\n TEST CHECKPOINT END \n\n\n =================================================")
+    print(f"\n\n\n TEST GRANTED ACCESS CHECKPOINT END \n\n\n =================================================")
+
+
+def test_terminal_tool_call_blocked_by_approval(monkeypatch: Any, tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    work_dir = tmp_path / "blocked-work"
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    monkeypatch.setattr("agent.core.make_provider", lambda *_args, **_kwargs: DeniedProvider())
+
+    agent = Agent(repo_root)
+    terminal_server = MCPServerConfig(
+        name="terminal-tools",
+        description="Terminal test server",
+        transport="stdio",
+        enabled=True,
+        command="python3",
+        args=[str(repo_root / "demo" / "mcp" / "terminal_mcp_server.py")],
+        env={"TERMINAL_MCP_ROOT": str(work_dir)},
+        auth=None,
+    )
+    agent.cfg.mcp_servers.mcp_servers = [terminal_server]
+
+    approvals: list[tuple[str, dict[str, Any]]] = []
+
+    def deny(_tool_name: str, arguments: dict[str, Any]) -> bool:
+        approvals.append(("terminal-tools__run_command", arguments))
+        return False
+
+    context = asyncio.run(
+        agent.run_once(
+            user_text="Try creating blocked summary file.",
+            provider_name="openai",
+            model_name="gpt-4o",
+            mode_name="debug",
+            session_id=None,
+            tool_approval_callback=deny,
+        )
+    )
+    print(f" ================================================= \n\n\n TEST BLOCKED ACCESS CHECKPOINT START\n\n\n")
+    blocked_summary = work_dir / "blocked_summary.txt"
+    print(f"summary path: {blocked_summary}")
+    print(f"summary exists: {blocked_summary.exists()}")
+    assert not blocked_summary.exists()
+    assert len(approvals) == 1
+
+    tool_messages = [m for m in context.messages if m.role == "tool"]
+    print(f"tool messages: {tool_messages[-1].content}")
+    assert tool_messages
+    assert "not approved by user" in str(tool_messages[-1].content)
+    assert "blocked as expected" in str(context.messages[-1].content).lower()
+    print(f"\n\n\n TEST  BLOCKED ACCESS  CHECKPOINT END \n\n\n =================================================")
