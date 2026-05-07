@@ -118,15 +118,17 @@ def test_terminal_tool_calls_require_and_use_approval(monkeypatch: Any, tmp_path
             tool_approval_callback=approve,
         )
     )
-
+    print(f" ================================================= \n\n\n TEST CHECKPOINT START\n\n\n")
     summary = work_dir / "summary.txt"
     print(f"summary path: {summary}")
     print(f"summary exists: {summary.exists()}")
-    print(f"summary content:\n{content}")
     assert summary.exists()
     content = summary.read_text(encoding="utf-8")
+    
+    print(f"summary content:\n{content}")
     assert "Summary file created" in content
     assert "Additional text added" in content
     assert len(approvals) == 2
     assert all(name == "terminal-tools__run_command" for name, _ in approvals)
     assert "Done." in str(context.messages[-1].content)
+    print(f"\n\n\n TEST CHECKPOINT END \n\n\n =================================================")
