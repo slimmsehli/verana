@@ -28,8 +28,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Test with pytest
+      env:
+        PYTHONUNBUFFERED: "1"
       run: |
         pip install -e . --no-deps
         pip install pytest
         rtl-agent --help
-        pytest -q tests/test_terminal_approval_flow.py
+        pytest -vv -s tests/test_terminal_approval_flow.py
