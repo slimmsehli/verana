@@ -120,6 +120,9 @@ def test_terminal_tool_calls_require_and_use_approval(monkeypatch: Any, tmp_path
     )
 
     summary = work_dir / "summary.txt"
+    print(f"summary path: {summary}")
+    print(f"summary exists: {summary.exists()}")
+    print(f"summary content:\n{content}")
     assert summary.exists()
     content = summary.read_text(encoding="utf-8")
     assert "Summary file created" in content
