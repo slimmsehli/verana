@@ -8,6 +8,13 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      run_eda_smoke:
+        description: "Install Verilator/Yosys and run EDA smoke test"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -35,3 +42,25 @@ jobs:
         pip install pytest
         rtl-agent --help
         pytest -vv -s tests/test_terminal_approval_flow.py
+
+    - name: Install EDA tools (optional)
+      if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_eda_smoke }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y verilator yosys
+        verilator --version
+        yosys -V
+
+    - name: Run Verilator smoke testcase (optional)
+      if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_eda_smoke }}
+      run: |
+        cat > ci_smoke.sv <<'EOF'
+        module ci_smoke;
+          initial begin
+            $display("CI Verilator smoke test");
+            $finish;
+          end
+        endmodule
+        EOF
+        verilator --binary -o ci_smoke ci_smoke.sv
+        ./obj_dir/ci_smoke
